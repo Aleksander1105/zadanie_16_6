@@ -3,12 +3,14 @@ import uuid from 'uuid';
 import style from './App.css';
 import Title from '../components/Title.js';
 import TodoList from '../components/TodoList';
+import TodoForm from '../components/TodoForm';
 import { hot } from 'react-hot-loader';
 
 class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			task: '',
 			data: [{
 				id: 1, 
 				text: 'clean room'
@@ -23,14 +25,19 @@ class App extends React.Component {
 			}]
 		};
 	}
-	addTodo(val) {
+	addTodo(e) {
+		(e).preventDefault(); //po co to?
+		if (!this.state.task) {return;}
 		const todo = {
-			text: val,
 			id: uuid.v4(),
+			text: this.state.task
 		};
 		// like push but does not modify the state
 		const data = [...this.state.data, todo];
-		this.setState({data});
+		this.setState({
+			data,
+			task: ''
+		});
 	}
 
 
@@ -39,10 +46,17 @@ class App extends React.Component {
 		this.setState({data: remainder});
 	}
 
+	handleChange(e) {
+		this.setState ({
+			task: e.target.value
+		});
+	}
+
 	render() {
 		return (
 			<div className={style.TodoApp}>
-				<Title data={this.state.data}/>
+				<Title data={this.state.data} />
+				<TodoForm add={(event) => this.addTodo(event)} handle={(event) => this.handleChange(event)} submittedText={this.state.task} />
 				<TodoList list={this.state.data} remove={(id) => this.removeTodo(id)} />
 			</div>
 		);
