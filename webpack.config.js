@@ -1,30 +1,55 @@
 const path = require('path');
+const webpack = require('webpack'),
+	  HtmlWebpackPlugin = require('html-webpack-plugin'),
+	  OptimizeJsPlugin = require('optimize-js-plugin'),
+	  UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
-module.exports = {
-	entry: './src/index.js',
-	output: {
-		path: path.resolve(__dirname, 'build'),
-		filename: 'app.bundle.js'
-	},
+	  const plugins = [
+	  	  new HtmlWebpackPlugin({
+            template: 'src/index.html',
+            filename: 'index.html',
+            inject: 'body',
+      })];
 
-	module: {
-		rules: [
-			{
-				test: /\.js$/,
-				loader: 'babel-loader'
+	module.exports = (env) => {
+		if (env === 'production') {
+	        plugins.push(
+	            new OptimizeJsPlugin({
+	                sourceMap: false
+	            })
+	        )
+	    } 
+
+		return {
+
+			mode: env || 'production',
+			entry: './src/index.js',
+			output: {
+				path: path.resolve(__dirname, 'build'),
+				filename: 'app.bundle.js'
 			},
-			{
-				test: /\.css$/,
-				use: [
-					{ loader: 'style-loader' },
+
+			module: {
+				rules: [
 					{
-						loader: 'css-loader',
-						options: {
-							modules: true
-						}
+						test: /\.js$/,
+						loader: 'babel-loader'
+					},
+					{
+						test: /\.css$/,
+						use: [
+							{ loader: 'style-loader' },
+							{
+								loader: 'css-loader',
+								options: {
+									modules: true
+								}
+							}
+						]
 					}
 				]
-			}
-		]
-	}
-};
+			},
+
+			plugins: plugins
+		}
+    };
