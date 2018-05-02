@@ -46,6 +46,13 @@ class App extends React.Component {
 		this.setState({data: remainder});
 	}
 
+	removeLastDo() {
+		console.log(this.state.data);
+		const removeLast = this.state.data.filter((todo, index) => index !== this.state.data.length -1);
+		this.setState({data: removeLast});
+	}
+
+
 	handleChange(e) {
 		this.setState ({
 			task: e.target.value
@@ -58,6 +65,7 @@ class App extends React.Component {
 				<Title data={this.state.data} />
 				<TodoForm add={(event) => this.addTodo(event)} handle={(event) => this.handleChange(event)} submittedText={this.state.task} />
 				<TodoList list={this.state.data} remove={(id) => this.removeTodo(id)} />
+				<button onClick={this.removeLastDo}>Remove</button>
 			</div>
 		);
 	}
